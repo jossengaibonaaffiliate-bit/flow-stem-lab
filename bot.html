@@ -207,8 +207,7 @@
             <div class="pete-avatar" id="avatar">
                 <img id="p-img"
                     src="https://images.unsplash.com/photo-1519085188583-8ad975bf38c2?auto=format&fit=crop&q=80&w=800"
-                    alt="Pete"
-                    style="display:block;">
+                    alt="Pete" style="display:block;">
             </div>
         </div>
 
@@ -245,9 +244,17 @@
 
             const statusText = document.getElementById('status-text');
             const statusBadge = document.getElementById('status-badge');
-            
+
             // Show connecting state
             if (statusBadge) statusBadge.style.opacity = '1';
+
+            // Security Check
+            if (!window.isSecureContext) {
+                console.error("Context is not secure (HTTPS required).");
+                if (statusText) statusText.innerText = "Error: HTTPS Required for Mic";
+                isConnecting = false;
+                return;
+            }
 
             try {
                 // Request microphone access (required for audio to play back)
@@ -258,26 +265,24 @@
 
                 await Conversation.startSession({
                     agentId: AGENT_ID,
-                    connectionType: 'web_rtc', // Fixed enum specific to current SDK version if needed, or stick to string 'webrtc' but usually handled by client
-                    // Note: ElevenLabs SDK often uses 'signed-url' or nothing for public agents. 
-                    // Assuming 'agentId' is sufficient for public agents.
-                    
+                    connectionType: 'webrtc',
                     dynamicVariables: dynamicVars,
                     onConnect: () => {
                         connected = true;
                         isConnecting = false;
-                        
+
                         // Update UI
                         const pText = document.getElementById('p-text');
                         if (pText) pText.style.display = 'none'; // Hide "Connecting..." text
-                        
+
                         const pImg = document.getElementById('p-img');
                         if (pImg) pImg.style.display = 'block';
 
                         if (statusText) statusText.innerText = "Pete is Live";
                         if (statusBadge) statusBadge.classList.remove('connecting');
-                        
+
                         // Optional: Update greeting or other text to indicate active
+                        const greetingEl = document.getElementById('greeting');
                         if (greetingEl) greetingEl.innerText = "Pete is listening.";
                     },
                     onDisconnect: () => {
@@ -289,18 +294,22 @@
                         console.error("ElevenLabs Error:", err);
                         isConnecting = false;
                         if (statusText) statusText.innerText = "Connection Failed. Retrying...";
-                        // Retry logic could go here
-                    },
-                    onModeChange: (mode) => {
-                        // Handle speaking/listening mode changes if desired
                     }
                 });
             } catch (err) {
                 isConnecting = false;
                 console.error("Setup Error:", err);
-                if (statusText) statusText.innerText = "Microphone Access Required";
-                // Don't loop retry infinitely without delay or check
-                setTimeout(startPete, 3000);
+                // Distinguish between NotAllowed (Permission) and NotFound (No Mic)
+                if (err.name === 'NotAllowedError') {
+                    if (statusText) statusText.innerText = "Microphone Permission Denied";
+                } else if (err.name === 'NotFoundError') {
+                    if (statusText) statusText.innerText = "No Microphone Found";
+                } else {
+                    if (statusText) statusText.innerText = "Microphone Access Error";
+                }
+
+                // Retry slowly
+                setTimeout(startPete, 5000);
             }
         }
 
