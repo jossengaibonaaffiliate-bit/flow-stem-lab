@@ -10,46 +10,63 @@ The Recall.ai bot configuration is missing critical audio parameters that were p
 
 ### Update the Recall.ai HTTP Request
 
-Add these parameters to the Recall.ai API call in your n8n workflow:
+Add these parameters to the Recall.ai API call in your n8n workflow. The critical addition is the **microphone permission** which was missing in previous versions.
 
+```json
+{
 ```json
 {
   "meeting_url": "{{ $json.meeting_url }}",
   "bot_name": "Pete Intake Bot",
-  "join_at": "{{ $json.start_time }}",
-  "recording_mode": "speaker_view",
+  "join_at": "{{ $json.join_at }}",
   "automatic_leave": {
     "waiting_room_timeout": 600
   },
+  "variant": {
+    "google_meet": "web_4_core",
+    "zoom": "web_4_core"
+  },
+  "output_media": {
+    "camera": {
+      "kind": "webpage",
+      "config": {
+        "url": "https://jossengaibonaaffiliate-bit.github.io/flow-stem-lab/bot.html?first_name={{ $json.first_name }}&email={{ $json.email }}"
+      }
+    }
+  },
   "browser_rendering_options": {
-    "url": "https://jossengaibonaaffiliate-bit.github.io/flow-stem-lab/bot.html?first_name={{ $json.first_name }}&email={{ $json.email }}",
-    "variant": "web_4_core"
+    "permissions": ["microphone"]
   }
 }
 ```
 
 ### Key Changes:
 
-1. **`recording_mode": "speaker_view"`** - Ensures audio is captured properly
-2. **`automatic_leave`** - Prevents the bot from leaving prematurely
-3. **`variant": "web_4_core"`** - Uses the optimized browser variant for better audio performance (this was critical in Make.com)
+1. **`"permissions": ["microphone"]`** - **CRITICAL FIX**. Without this, the bot cannot transmit audio into the meeting.
+2. **`output_media` Structure** - Correctly defines the bot's video feed URL.
+3. **`variant` placement** - Moved to the top level to ensure `web_4_core` is applied correctly.
+4. **`join_at` Calculation** - We now calculate a time **10 minutes before** the meeting starts.
+   - n8n Expression: `{{ new Date(new Date($node["Calendly Trigger"].json.payload.scheduled_event.start_time).getTime() - 10 * 60 * 1000).toISOString() }}`
 
 ### Implementation Steps:
 
 1. **Open your n8n workflow**
-2. **Click on the "Send to Recall.ai" HTTP Request node**
-3. **Update the JSON Body** to include the parameters above
+2. **Updates to "Extract Google Meet URL" Node:**
+   - Add a new value called `join_at`.
+   - Use the expression: `{{ new Date(new Date($node["Calendly Trigger"].json.payload.scheduled_event.start_time).getTime() - 10 * 60 * 1000).toISOString() }}`
+3. **Updates to "Send to Recall.ai" Node:**
+   - Update `join_at` in the JSON body to use `{{ $json.join_at }}`.
 4. **Save the workflow**
-5. **Test with a new meeting**
 
 ### Alternative: Import the Fixed Workflow
 
-Use the file: `pete_n8n_workflow_v5_audio_fix.json`
+Use the file: `pete_n8n_workflow_v9_early_join.json`
 
 This includes:
 - Google Calendar integration (Google Meet URL fix)
-- Proper audio configuration
-- web_4_core variant for optimal performance
+- **Microphone Permissions Fix**
+- Proper `output_media` structure
+- web_4_core variant
 
 ## Testing
 
@@ -68,8 +85,7 @@ This includes:
 
 ### "Microphone permission denied" error
 - This means bot.html couldn't get mic permissions
-- The `web_4_core` variant should auto-grant permissions
-- If still failing, check Recall.ai dashboard for browser console errors
+- The `permissions: ["microphone"]` setting in `browser_rendering_options` should fix this.
 
 ### Pete's audio is choppy/stuttering
 - This was the original issue with Make.com
@@ -78,12 +94,12 @@ This includes:
 
 ## Comparison to Make.com
 
-The Make.com workflow had these same parameters:
-- ✅ `recording_mode`: "speaker_view"
-- ✅ `variant`: "web_4_core"  
-- ✅ `automatic_leave` configuration
+The Make.com workflow had these critical parameters that were missing in n8n:
+- ✅ **`permissions: ["microphone"]`** in `browser_rendering_options` (This was the main issue)
+- ✅ `output_media` structure for the bot's camera info
+- ✅ `variant` configured for both Google Meet and Zoom
 
-The n8n workflow was missing these, which is why audio wasn't working.
+The previous n8n workflow was missing the microphone permission, which is why audio wasn't working.
 
 ## Next Steps
 
