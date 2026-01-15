@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Demo | Flow Stem Lab</title>
+    <meta name="description" content="Schedule a personalized demo of Flow Stem Lab's lead distribution platform.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Specific Styles for Booking Page */
+        .booking-section {
+            padding: 120px 0 80px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .booking-container {
+            background: var(--color-white);
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-soft);
+            display: flex;
+            max-width: 1000px;
+            width: 100%;
+            overflow: hidden;
+            border: 1px solid rgba(24, 17, 64, 0.05);
+        }
+
+        @media (max-width: 768px) {
+            .booking-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar" style="position: absolute;">
+        <div class="container nav-container">
+            <a href="index.html" class="logo">
+                <img src="assets/logo.png" alt="Flow Stem Lab" style="height: 70px;">
+            </a>
+            <div class="nav-links">
+                <a href="index.html#features">Features</a>
+                <a href="index.html#testimonials">Testimonials</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="booking-section">
+        <div class="booking-container"
+            style="max-width: 100%; width: 100%; box-shadow: none; background: transparent; height: 750px;">
+            <!-- Calendly inline widget begin -->
+            <div class="calendly-inline-widget"
+                data-url="https://calendly.com/joss-flowstemlab/leadsystem?hide_gdpr_banner=1&primary_color=10b981&text_color=181140&background_color=ffffff"
+                style="min-width:320px;height:750px;width:100%;"></div>
+            <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+            <!-- Calendly inline widget end -->
+        </div>
+    </section>
+
+    <!-- Simple Script for Interaction Demo -->
+    <script>
+        function toggleTimeSlots() {
+            // For demo purposes, the slots are shown for the active day
+            // In a real integration, this would fetch GCal availability
+            alert("This is a demo UI. connecting to a real Google Calendar would require embedding a service like Calendly here.");
+        }
+    </script>
+</body>
+
+</html>

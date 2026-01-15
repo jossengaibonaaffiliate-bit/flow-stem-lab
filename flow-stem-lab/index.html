@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flow Stem Lab | The Monopoly Software System</title>
+    <meta name="description" content="Deploy the world's most powerful AI-Driven Real Estate and Legal Software.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Feature & Comparison Visuals */
+        .chart-visual {
+            width: 100%;
+            height: 120px;
+            margin-top: 20px;
+            background: rgba(16, 185, 129, 0.05);
+            /* Soft Green Tint */
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            padding: 10px;
+            gap: 8px;
+            overflow: hidden;
+        }
+
+        .bar {
+            flex: 1;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 4px 4px 0 0;
+            transition: height 1s ease;
+        }
+
+        .bar.highlight {
+            background: #10B981;
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .wave-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.5;
+        }
+
+        /* Comparison Chart Styles */
+        .comparison-visual {
+            margin-top: 50px;
+            padding: 40px;
+            background: var(--color-white);
+            border: 1px solid rgba(24, 17, 64, 0.05);
+            border-radius: 24px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .chart-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+
+        .chart-label {
+            width: 120px;
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            font-weight: 500;
+        }
+
+        .chart-track {
+            flex: 1;
+            height: 40px;
+            background: rgba(24, 17, 64, 0.03);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+        }
+
+        .chart-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding-left: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: white;
+            white-space: nowrap;
+            transition: width 2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .fill-human {
+            background: #94A3B8;
+            /* Muted Slate */
+            width: 25%;
+        }
+
+        .fill-ai {
+            background: #10B981;
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+            width: 100%;
+        }
+
+        .efficiency-callout {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.1rem;
+            color: #10B981;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        /* Themed Section Styles */
+        .features,
+        .comparison,
+        .faq,
+        .pricing {
+            background-color: var(--color-gray-light);
+            color: var(--color-text-main);
+        }
+
+        .section-header h2 {
+            color: var(--color-navy);
+        }
+
+        .feature-card {
+            background: var(--color-white);
+            border: 1px solid rgba(24, 17, 64, 0.05);
+            border-radius: 24px;
+            padding: 32px;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-glow);
+            border-color: var(--color-violet);
+        }
+
+        .battle-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 50px;
+        }
+
+        .battle-card {
+            background: var(--color-white);
+            border: 1px solid rgba(24, 17, 64, 0.05);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .battle-card.premium {
+            border-color: #10B981;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.02) 0%, #FFFFFF 100%);
+        }
+
+        .battle-card h3 {
+            color: var(--color-navy);
+        }
+
+        .battle-list {
+            margin-top: 24px;
+        }
+
+        .battle-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(24, 17, 64, 0.05);
+        }
+
+        .premium-value {
+            color: #10B981;
+            font-weight: 700;
+        }
+
+        .faq-grid {
+            max-width: 800px;
+            margin: 40px auto;
+        }
+
+        .faq-item {
+            background: var(--color-white);
+            margin-bottom: 16px;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid rgba(24, 17, 64, 0.05);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .faq-item h4 {
+            color: var(--color-navy);
+        }
+
+        .pricing {
+            padding: 120px 0;
+            text-align: center;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--color-white);
+            border: 1px solid rgba(24, 17, 64, 0.05);
+            border-radius: 24px;
+            padding: 48px;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-glow);
+            border-color: var(--color-violet);
+        }
+
+        .pricing-card.premium-offer {
+            border: 2px solid var(--primary);
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.02) 0%, #FFFFFF 100%);
+            position: relative;
+        }
+
+        .pricing-card.premium-offer::after {
+            content: "RESULTS GUARANTEED";
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 4px 16px;
+            border-radius: 99px;
+            font-size: 0.75rem;
+            font-weight: 900;
+        }
+
+        .pricing-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 16px;
+            color: var(--color-navy);
+        }
+
+        .pricing-card .price {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--color-violet);
+            margin-bottom: 24px;
+        }
+
+        .pricing-card .price span {
+            font-size: 1rem;
+            color: var(--color-text-muted);
+            font-weight: 400;
+        }
+
+        .pricing-card ul {
+            text-align: left;
+            display: inline-block;
+            margin-bottom: 32px;
+            list-style: none;
+            padding: 0;
+        }
+
+        .pricing-card ul li {
+            padding: 8px 0;
+            padding-left: 28px;
+            position: relative;
+            color: var(--color-text-muted);
+        }
+
+        .pricing-card ul li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--color-violet);
+            font-weight: 900;
+        }
+
+        .footer {
+            padding: 60px 0;
+            background-color: var(--color-white);
+            border-top: 1px solid rgba(24, 17, 64, 0.05);
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .pricing-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <img src="assets/logo.png" alt="Flow Stem Lab" style="height: 60px;">
+            </a>
+            <div class="nav-links">
+                <a href="#features">The System</a>
+                <a href="#pricing">Pricing</a>
+                <a href="booking.html" class="btn btn-primary">Book a Call</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <div class="badge">V3.0 NOW LIVE</div>
+                <h1>Your 24/7 Receptionist <span class="text-gradient">"Christine"</span></h1>
+                <p>Designed for Real Estate & Legal pros. "Christine" answers every call, qualifies every lead, and
+                    sends
+                    an
+                    instant summary to your phone. Never miss a client again.</p>
+                <div class="hero-actions">
+                    <a href="booking.html" class="btn btn-primary">Book a Call</a>
+                </div>
+                <div class="hero-meta">
+                    <span>Multi-Vertical Support</span> • <span>Instant Summaries</span>
+                </div>
+            </div>
+            <div class="hero-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1000"
+                    alt="Software Dashboard" class="hero-image">
+                <div class="glow-effect"></div>
+            </div>
+        </div>
+    </header>
+
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2>The Professional's Unfair Advantage</h2>
+                <p>Deploy the high-performance intake system used by the top 1% of firms.</p>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="icon">💼</div>
+                    <h3>Legal Case Intake</h3>
+                    <p>"Christine" qualifies cases 24/7, gathering critical case details and urgency so you only talk to
+                        high-value plaintiffs.</p>
+                    <div class="chart-visual">
+                        <div class="bar highlight" style="height: 95%"></div>
+                        <div class="bar" style="height: 25%"></div>
+                        <div class="bar" style="height: 10%"></div>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">🏘️</div>
+                    <h3>Real Estate ISA</h3>
+                    <p>Qualify sellers while you're at a showing. "Christine" captures property goals and books
+                        appointments
+                        without a human assist.</p>
+                    <div class="chart-visual" style="justify-content: space-around; padding-top: 20px;">
+                        <div
+                            style="display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; flex: 1;">
+                            <div class="bar" style="height: 85%; width: 20px; background: #94A3B8; opacity: 0.5;"></div>
+                            <span style="font-size: 0.65rem; margin-top: 4px; color: #64748B; font-weight: 600;">Human
+                                ($4k)</span>
+                        </div>
+                        <div
+                            style="display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end; flex: 1;">
+                            <div class="bar highlight" style="height: 15%; width: 20px;"></div>
+                            <span style="font-size: 0.65rem; margin-top: 4px; color: #10B981; font-weight: 900;">AI
+                                ($497)</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="icon">📲</div>
+                    <h3>Instant Lead Dossiers</h3>
+                    <p>The second "Christine" hangs up, a full dossier of the name, goal, and urgency is pushed to your
+                        phone
+                        via SMS.</p>
+                    <div class="chart-visual">
+                        <div class="bar highlight" style="height: 95%"></div>
+                        <div class="bar" style="height: 15%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="comparison">
+        <div class="container">
+            <div class="roi-header">
+                <h2>Human Labor vs. <span class="roi-highlight">AI Leverage</span></h2>
+                <p>Compare the cost of scaling with people versus scaling with the Monopoly System.</p>
+            </div>
+
+            <div class="comparison-visual">
+                <div class="chart-row">
+                    <div class="chart-label">Lead Speed</div>
+                    <div class="chart-track">
+                        <div class="chart-fill fill-human" style="width: 15%">Human ISA (15m)</div>
+                        <div class="chart-fill fill-ai" style="width: 100%">AI Sales Shark (5s)</div>
+                    </div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">Availability</div>
+                    <div class="chart-track">
+                        <div class="chart-fill fill-human" style="width: 23%">40 hrs / week</div>
+                        <div class="chart-fill fill-ai" style="width: 100%">168 hrs / week (Open 24/7)</div>
+                    </div>
+                </div>
+                <div class="chart-row">
+                    <div class="chart-label">Output Scale</div>
+                    <div class="chart-track">
+                        <div class="chart-fill fill-human" style="width: 35%">Capped Output</div>
+                        <div class="chart-fill fill-ai" style="width: 100%">Unlimited Appointment Scaling</div>
+                    </div>
+                </div>
+                <p class="efficiency-callout">The AI Engine runs at 6.4x human capacity for 12% of the cost.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="pricing" class="pricing">
+        <div class="container">
+            <div class="section-header">
+                <h2>Simple, ROI-Focused Pricing</h2>
+                <p>Choose the level of growth that matches your ambition.</p>
+            </div>
+
+            <div class="pricing-grid">
+                <!-- Intake Tier -->
+                <div class="pricing-card">
+                    <h3>Intake engine</h3>
+                    <div class="price">$497<span>/mo</span></div>
+                    <ul>
+                        <li>24/7 Intake Engine ("Christine")</li>
+                        <li>Instant Lead Dossiers (SMS & Email)</li>
+                        <li>Direct Email Summary Reports</li>
+                        <li>Calendar Sync or New Email Setup</li>
+                        <li>One-Click Snapshot Deployment</li>
+                    </ul>
+                    <a href="booking.html" class="btn btn-secondary">Book a Call</a>
+                </div>
+
+                <!-- Growth Tier -->
+                <div class="pricing-card premium-offer">
+                    <h3>Monopoly Growth</h3>
+                    <div class="price">Custom Growth</div>
+                    <ul>
+                        <li>Everything in the Intake Tier</li>
+                        <li>**10 Guaranteed Appointments**</li>
+                        <li>Full Meta Ads Management</li>
+                        <li>Automated Seller/Plaintiff Ads</li>
+                        <li>**100% Risk-Free Guarantee**</li>
+                    </ul>
+                    <a href="booking.html" class="btn btn-primary">Book a Call</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-brand">
+                <a href="#" class="logo">Flow Stem Lab</a>
+                <p>&copy; 2026 Flow Stem Lab. Built for Scale.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

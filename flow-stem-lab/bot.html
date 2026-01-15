@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pete | Growth Partner AI</title>
+    <!-- Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #10B981;
+            --primary-glow: rgba(16, 185, 129, 0.4);
+            --bg-dark: #05050A;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --text-main: #FFFFFF;
+            --text-muted: #94A3B8;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+            background: radial-gradient(circle at center, #111827 0%, #050505 100%);
+        }
+
+        .container {
+            text-align: center;
+            z-index: 10;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            margin: 0 auto 40px;
+        }
+
+        .avatar-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--primary-glow);
+            filter: blur(40px);
+            opacity: 0.6;
+            animation: pulse 4s infinite ease-in-out;
+        }
+
+        .avatar-ring {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border-radius: 50%;
+            border: 2px solid var(--primary);
+            opacity: 0.3;
+            animation: rotate 10s linear infinite;
+        }
+
+        .pete-avatar {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .pete-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .initials {
+            font-size: 100px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #FFF 0%, var(--primary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            font-size: 0.9rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary);
+            margin-right: 10px;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* Waves Animation */
+        .waves {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 15vh;
+            opacity: 0.1;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        @keyframes rotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Connecting Animation */
+        .connecting .status-dot {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.3;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="waves">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" style="height: 100%; width: 100%;">
+            <path fill="#10B981" fill-opacity="1"
+                d="M0,192L48,176C96,160,192,128,288,128C384,128,480,160,576,181.3C672,203,768,213,864,197.3C960,181,1056,139,1152,122.7C1248,107,1344,117,1392,122.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z">
+            </path>
+        </svg>
+    </div>
+
+    <div class="container">
+        <div class="avatar-container">
+            <div class="avatar-glow"></div>
+            <div class="avatar-ring"></div>
+            <div class="pete-avatar" id="avatar">
+                <span id="p-text" class="initials">P</span>
+                <img id="p-img"
+                    src="https://images.unsplash.com/photo-1519085188583-8ad975bf38c2?auto=format&fit=crop&q=80&w=800"
+                    style="display:none;">
+            </div>
+        </div>
+
+        <h1 id="greeting">Hi there,</h1>
+        <p>Your Growth Partner is joining the session...</p>
+
+        <div id="status-badge" class="status-badge connecting">
+            <div class="status-dot"></div>
+            <span id="status-text">Establishing Secure Connection...</span>
+        </div>
+    </div>
+
+    <script type="module">
+        import { Conversation } from 'https://esm.sh/@elevenlabs/client';
+
+        const AGENT_ID = 'agent_0801kepwdkh9ewsay80c8g0ptr1h';
+        let connected = false;
+        let isConnecting = false;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const firstName = urlParams.get('first_name') || urlParams.get('name')?.split(' ')[0] || 'there';
+
+        document.getElementById('greeting').innerText = `Hi ${firstName},`;
+
+        const dynamicVars = {
+            first_name: firstName,
+            last_name: urlParams.get('last_name') || '',
+            email: urlParams.get('email') || 'Unknown',
+            booking_goal: urlParams.get('goal') || 'scale your production'
+        };
+
+        async function startPete() {
+            if (connected || isConnecting) return;
+            isConnecting = true;
+
+            try {
+                const statusText = document.getElementById('status-text');
+                const statusBadge = document.getElementById('status-badge');
+
+                await navigator.mediaDevices.getUserMedia({ audio: true });
+
+                // Visual feedback for the delay
+                statusText.innerText = "Syncing AI Persona...";
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                await Conversation.startSession({
+                    agentId: AGENT_ID,
+                    connectionType: 'webrtc',
+                    dynamicVariables: dynamicVars,
+                    onConnect: () => {
+                        connected = true;
+                        isConnecting = false;
+                        document.getElementById('p-text').style.display = 'none';
+                        document.getElementById('p-img').style.display = 'block';
+                        statusText.innerText = "Pete is Live";
+                        statusBadge.classList.remove('connecting');
+                        document.querySelector('p').innerText = "Vocal session active. Pete is ready to talk.";
+                    },
+                    onDisconnect: () => {
+                        connected = false;
+                        statusText.innerText = "Session Ended";
+                        statusBadge.style.opacity = '0.5';
+                    },
+                    onError: (err) => {
+                        console.error(err);
+                        isConnecting = false;
+                        statusText.innerText = "Connection Failed. Retrying...";
+                    }
+                });
+            } catch (err) {
+                isConnecting = false;
+                console.error(err);
+                setTimeout(startPete, 3000);
+            }
+        }
+
+        // Auto-start or wait for user interaction to satisfy browser policies
+        window.addEventListener('click', () => {
+            if (!connected && !isConnecting) startPete();
+        });
+
+        window.onload = () => {
+            // Try to start immediately, but some browsers block audio till click
+            startPete();
+        };
+    </script>
+</body>
+
+</html>
