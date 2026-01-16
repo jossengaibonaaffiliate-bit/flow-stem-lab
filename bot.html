@@ -223,15 +223,30 @@
         let isConnecting = false;
 
         const urlParams = new URLSearchParams(window.location.search);
-        const firstName = urlParams.get('first_name') || urlParams.get('name')?.split(' ')[0] || 'there';
+
+        // Robust Name Parsing
+        let fName = urlParams.get('first_name');
+        let lName = urlParams.get('last_name');
+        const fullName = urlParams.get('name');
+
+        if (!fName && fullName) {
+            const parts = fullName.trim().split(' ');
+            fName = parts[0];
+            if (parts.length > 1) {
+                lName = parts.slice(1).join(' '); // EVERYTHING else is last name
+            }
+        }
+
+        fName = fName || 'there';
+        lName = lName || '';
 
         // Safe element selection
         const greetingEl = document.getElementById('greeting');
-        if (greetingEl) greetingEl.innerText = `Hi ${firstName},`;
+        if (greetingEl) greetingEl.innerText = `Hi ${fName},`;
 
         const dynamicVars = {
-            first_name: firstName,
-            last_name: urlParams.get('last_name') || '',
+            first_name: fName,
+            last_name: lName,
             email: urlParams.get('email') || 'Unknown',
             booking_goal: urlParams.get('goal') || 'scale your production'
         };
