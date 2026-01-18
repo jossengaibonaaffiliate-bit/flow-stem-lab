@@ -93,6 +93,12 @@
         // Force reload image with timestamp to be double sure
         avatarImg.src = `assets/pete_avatar_v2.png?v=${new Date().getTime()}`;
 
+        // Extract Client Data from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const firstName = urlParams.get('first_name') || 'Guest';
+        const lastName = urlParams.get('last_name') || '';
+        const email = urlParams.get('email') || '';
+
         async function startPete() {
             try {
                 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -111,9 +117,16 @@
                 statusEl.innerText = "Connecting...";
                 statusEl.style.color = "#FEF3C7"; // Amber
 
-                // 3. Start ElevenLabs Session
+                // 3. Start ElevenLabs Session with Client Data
                 conversation = await Conversation.startSession({
                     agentId: AGENT_ID,
+                    clientData: {
+                        dynamic_variables: {
+                            first_name: firstName,
+                            last_name: lastName,
+                            email: email
+                        }
+                    },
                     onConnect: () => {
                         statusEl.innerText = "● Online";
                         statusEl.style.color = "#10B981"; // Green
