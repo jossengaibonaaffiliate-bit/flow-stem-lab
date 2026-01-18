@@ -27,6 +27,10 @@
     box-sizing: border-box;
 }
 
+html {
+    background-color: var(--color-white);
+}
+
 body {
     font-family: var(--font-main);
     color: var(--color-text-main);
@@ -134,9 +138,34 @@ ul {
 /* Hero Section */
 .hero {
     padding: 160px 0 100px;
-    background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.1), transparent 40%),
-        radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.05), transparent 40%);
+    background-color: var(--color-white);
+    /* using solid colors for gradient stops to prevent screenshot alpha artifacts */
+    background-image:
+        radial-gradient(circle at top right, rgba(16, 185, 129, 0.1) 0%, #FFFFFF 60%),
+        radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.05) 0%, #FFFFFF 60%);
     overflow: hidden;
+    position: relative;
+    /* Ensure z-index works if needed */
+}
+
+/* Print / Screenshot Optimization */
+@media print {
+    body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .hero {
+        background-color: white !important;
+        background-image: none !important;
+        /* Simplify for print to avoid artifacts, or keep if supported */
+    }
+
+    .text-gradient {
+        background: none;
+        -webkit-text-fill-color: var(--color-violet);
+        color: var(--color-violet);
+    }
 }
 
 .hero-container {
@@ -407,5 +436,182 @@ ul {
     .feature-visual {
         width: 100%;
         height: 300px;
+    }
+}
+
+/* =========================================
+   NEW SECTIONS (Agency Style)
+   ========================================= */
+
+/* How It Works (Steps) */
+.how-it-works {
+    padding: 100px 0;
+    background-color: var(--color-white);
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;
+    margin-top: 60px;
+}
+
+.step-card {
+    text-align: left;
+    padding: 30px;
+}
+
+.step-number {
+    font-size: 4rem;
+    font-weight: 900;
+    color: rgba(16, 185, 129, 0.2);
+    /* Faded Brand Color */
+    line-height: 1;
+    margin-bottom: 20px;
+}
+
+.step-card h3 {
+    font-size: 1.5rem;
+    color: var(--color-navy);
+    margin-bottom: 12px;
+}
+
+.step-card p {
+    color: var(--color-text-muted);
+}
+
+/* About Section (Dark Premium) */
+.about-section {
+    padding: 120px 0;
+    background-color: #0D0B04;
+    /* Deep Dark from ref */
+    color: white;
+}
+
+.about-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+}
+
+.about-content h2 {
+    font-size: 3rem;
+    margin-bottom: 24px;
+    color: white;
+}
+
+.about-content p {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 24px;
+}
+
+.about-stats {
+    display: flex;
+    gap: 48px;
+    margin-top: 40px;
+}
+
+.about-stat h4 {
+    font-size: 2.5rem;
+    color: var(--color-violet);
+    margin-bottom: 4px;
+}
+
+.about-stat span {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* FAQ Section (Accordion) */
+.faq-section {
+    padding: 120px 0;
+    background-color: #F5F5F7;
+    /* Light Gray from ref */
+}
+
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.faq-header {
+    margin-bottom: 60px;
+    text-align: center;
+}
+
+.faq-header span {
+    display: inline-block;
+    padding: 6px 12px;
+    background: rgba(24, 17, 64, 0.05);
+    border-radius: 99px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+}
+
+.faq-header h2 {
+    font-size: 2.5rem;
+    color: var(--color-navy);
+}
+
+.accordion-item {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 16px;
+}
+
+.accordion-item summary {
+    padding: 24px 0;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--color-navy);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    list-style: none;
+    transition: color 0.3s ease;
+}
+
+.accordion-item summary:hover {
+    color: var(--color-violet);
+}
+
+.accordion-item summary::-webkit-details-marker {
+    display: none;
+}
+
+.accordion-item summary::after {
+    content: '+';
+    font-size: 1.5rem;
+    font-weight: 300;
+    color: var(--color-text-muted);
+}
+
+.accordion-item[open] summary::after {
+    content: '−';
+}
+
+.accordion-item p {
+    padding-bottom: 24px;
+    color: var(--color-text-muted);
+    line-height: 1.7;
+    padding-right: 40px;
+}
+
+@media (max-width: 768px) {
+
+    .steps-grid,
+    .about-container {
+        grid-template-columns: 1fr;
+    }
+
+    .about-content h2 {
+        font-size: 2rem;
     }
 }
