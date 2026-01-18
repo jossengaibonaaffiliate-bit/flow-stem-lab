@@ -4,181 +4,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pete | Growth Partner AI</title>
-    <!-- Modern Typography -->
+    <title>Pete | Growth Partner</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #10B981;
-            --bg-dark: #05050A;
-            --text-main: #FFFFFF;
-            --text-muted: #94A3B8;
-        }
-
         body {
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
+            background: url('assets/meet_background.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #ffffff;
             font-family: 'Outfit', sans-serif;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100vh;
+            margin: 0;
             overflow: hidden;
-        }
-
-        .container {
             text-align: center;
-            z-index: 10;
         }
 
         .avatar-container {
-            position: relative;
-            width: 280px;
-            height: 280px;
-            margin: 0 auto 40px;
-        }
-
-        .pete-avatar {
-            position: relative;
-            width: 100%;
-            height: 100%;
+            width: 200px;
+            height: 200px;
+            margin-bottom: 24px;
             border-radius: 50%;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            border: 2px solid rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            transition: border-color 0.3s ease;
         }
 
-        .pete-avatar img {
+        .avatar-container img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
 
-        h1 {
-            font-size: 2.5rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-            letter-spacing: -0.02em;
+        p {
+            color: #94A3B8;
+            font-size: 1.2rem;
+            margin: 0;
+            font-weight: 400;
         }
 
-        p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            margin-bottom: 30px;
+        #start-btn {
+            padding: 12px 24px;
+            background-color: #10B981;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            display: none;
+            /* Hidden by default, shown if autoplay fails */
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
-        <!-- Greeting -->
-        <h1 id="greeting">Hi there,</h1>
-        <!-- Simple Status Text (Connecting...) -->
-        <p id="p-text">Connecting to Pete...</p>
 
-        <div class="avatar-container">
-            <div class="pete-avatar" id="avatar">
-                <img id="p-img" src="assets/pete_avatar.jpg" alt="Pete" style="display:block;">
-            </div>
-        </div>
+    <div class="avatar-container">
+        <!-- V2 Filename to bust strict caches -->
+        <img id="avatar-img" src="assets/pete_avatar_v2.png" alt="Pete">
     </div>
+
+    <p id="status">Initializing...</p>
+
+    <button id="start-btn">Start Conversation</button>
 
     <script type="module">
         import { Conversation } from 'https://esm.sh/@elevenlabs/client';
 
         const AGENT_ID = 'agent_0801kepwdkh9ewsay80c8g0ptr1h';
-        let connected = false;
-        let isConnecting = false;
+        let conversation = null;
 
-        const urlParams = new URLSearchParams(window.location.search);
+        const statusEl = document.getElementById('status');
+        const avatarImg = document.getElementById('avatar-img');
+        const startBtn = document.getElementById('start-btn');
 
-        // Strict approach: Trust the URL params implicitly
-        const fName = urlParams.get('first_name') || 'there';
-        const lName = urlParams.get('last_name') || '';
-
-        // Safe element selection
-        const greetingEl = document.getElementById('greeting');
-        if (greetingEl) greetingEl.innerText = `Hi ${fName},`;
-
-        const dynamicVars = {
-            first_name: fName,
-            last_name: lName,
-            email: urlParams.get('email') || 'Unknown',
-            booking_goal: urlParams.get('goal') || 'scale your production'
-        };
+        // Force reload image with timestamp to be double sure
+        avatarImg.src = `assets/pete_avatar_v2.png?v=${new Date().getTime()}`;
 
         async function startPete() {
-            if (connected || isConnecting) return;
-            isConnecting = true;
-
-            // Security Check
-            if (!window.isSecureContext) {
-                console.error("Context is not secure (HTTPS required).");
-                alert("HTTPS Required for Microphone Access");
-                isConnecting = false;
-                return;
-            }
-
             try {
-                // Request microphone access (required for audio to play back)
+                // 1. Validating Audio Context (Fix for 'Ends after few seconds')
+                // Browsers suspend audio if no user interaction. We try to resume it.
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                if (audioContext.state === 'suspended') {
+                    console.log("Audio Context Suspended - Waiting for interaction");
+                    startBtn.style.display = 'block';
+                    statusEl.innerText = "Click Start to Begin";
+                    return; // Wait for button click
+                }
+
+                statusEl.innerText = "Connecting...";
+
+                // 2. Request Mic (Required)
                 await navigator.mediaDevices.getUserMedia({ audio: true });
 
-                const pText = document.getElementById('p-text');
-                if (pText) pText.innerText = "Syncing...";
-
-                await new Promise(resolve => setTimeout(resolve, 2000));
-
-                await Conversation.startSession({
+                // 3. Start ElevenLabs Session
+                conversation = await Conversation.startSession({
                     agentId: AGENT_ID,
-                    connectionType: 'webrtc',
-                    dynamicVariables: dynamicVars,
                     onConnect: () => {
-                        connected = true;
-                        isConnecting = false;
-
-                        // Update UI - Minimalist: Hide status text when connected
-                        if (pText) pText.style.visibility = 'hidden';
+                        statusEl.innerText = "● Online";
+                        statusEl.style.color = "#10B981"; // Green
+                        startBtn.style.display = 'none';
                     },
                     onDisconnect: () => {
-                        connected = false;
-                        if (pText) {
-                            pText.style.visibility = 'visible';
-                            pText.innerText = "Session Ended";
-                        }
+                        statusEl.innerText = "Session Ended";
+                        statusEl.style.color = "#94A3B8";
                     },
                     onError: (err) => {
                         console.error("ElevenLabs Error:", err);
-                        isConnecting = false;
-                        if (pText) pText.innerText = "Connection Failed. Retrying...";
+                        statusEl.innerText = "Error: " + (err.message || "Connection Failed");
+                        statusEl.style.color = "#EF4444";
+                    },
+                    onModeChange: (mode) => {
+                        if (mode.mode === 'speaking') {
+                            statusEl.innerText = "● Pete is Talking";
+                            statusEl.style.color = "#3B82F6"; // Blue
+                            avatarImg.style.borderColor = "#3B82F6";
+                        } else {
+                            statusEl.innerText = "● Listening...";
+                            statusEl.style.color = "#10B981"; // Green
+                            avatarImg.style.borderColor = "rgba(255, 255, 255, 0.1)";
+                        }
                     }
                 });
+
             } catch (err) {
-                isConnecting = false;
-                console.error("Setup Error:", err);
-                const pText = document.getElementById('p-text');
-
-                // Distinguish between NotAllowed (Permission) and NotFound (No Mic)
-                if (err.name === 'NotAllowedError') {
-                    if (pText) pText.innerText = "Microphone Permission Denied";
+                console.error("Setup error:", err);
+                if (err.name === 'NotAllowedError' || err.name === 'NotReadableError') {
+                    statusEl.innerText = "Microphone Blocked. Allow access to speak.";
                 } else {
-                    if (pText) pText.innerText = "Microphone Access Error";
+                    statusEl.innerText = "Connection Failed";
                 }
-
-                // Retry slowly
-                setTimeout(startPete, 5000);
+                statusEl.style.color = "#EF4444";
+                startBtn.style.display = 'block'; // Show retry
+                startBtn.innerText = "Retry";
             }
         }
 
-        // Auto-start
-        window.addEventListener('click', () => {
-            if (!connected && !isConnecting) startPete();
+        // Button Listener for manual start (if autoplay blocked)
+        startBtn.addEventListener('click', () => {
+            startBtn.style.display = 'none';
+            statusEl.innerText = "Initializing...";
+            startPete();
         });
 
-        window.onload = () => {
-            startPete();
-        };
+        // Trigger on load
+        window.addEventListener('load', startPete);
     </script>
 </body>
 
